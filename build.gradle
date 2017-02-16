@@ -1,0 +1,142 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE")
+        classpath("net.saliman:gradle-cobertura-plugin:2.3.0")
+        classpath("org.hidetake:gradle-ssh-plugin:2.0.0")
+        classpath('mysql:mysql-connector-java:5.1.34')
+    }
+}
+
+
+configurations.all {
+    exclude group: 'commons-logging'
+    exclude group: 'org.apache.tomcat'
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
+}
+
+version = '0.1.0-SNAPSHOT'
+
+allprojects
+        {
+            apply plugin: 'maven'
+            apply plugin: 'eclipse'
+            apply plugin: 'idea'
+            apply plugin: 'java'
+            apply plugin: 'org.springframework.boot'
+
+            ext{
+                springBootVersion='1.4.2.RELEASE'
+                jacksonVersion = '2.6.4'
+                dropWizardMetricsVersion = '3.1.2'
+                quartzVersion = '2.2.1'
+                authNVersion = '15.10.02.4'
+                lombokVersion = '1.16.8'
+                httpClientVersion = '4.5.2'
+            }
+
+
+            repositories {
+                mavenCentral()
+                maven{ url "http://repo.spring.io/snapshot" }
+                maven{ url "http://repo.spring.io/milestone" }
+                maven{ url "https://repository.jboss.org/nexus/content/repositories/releases" }
+                maven { url 'http://dl.bintray.com/readytalk/maven' }
+            }
+
+            task wrapper(type: Wrapper) { gradleVersion = '3.2.1' }
+
+
+            sourceSets {
+                main {
+                    java.srcDir "src/main/java"
+                    resources.srcDir "src/main/resources"
+                }
+                test {
+                    java.srcDir "src/test/java"
+                    resources.srcDir "src/test/resources"
+                }
+                integrationTest {
+                    java.srcDir "src/integration-test/java"
+                    resources.srcDir "src/integration-test/resources"
+                }
+            }
+
+            buildDir = 'target'
+
+            apply from: "${rootDir}/common.gradle"
+            apply from: "${rootDir}/mapstruct.gradle"
+            apply from: "${rootDir}/test.gradle"
+            //apply from: "${rootDir}/quality.gradle"
+
+            springBoot {
+                mainClass = "com.rajorshi.samay.Application" 
+            }
+
+
+            idea {
+                module {
+                    downloadJavadoc = true
+                    downloadSources = true
+                }
+            }
+
+            dependencies {
+                compile("joda-time:joda-time:2.2")
+                //springboot
+                compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion") {
+                    exclude module: "spring-boot-starter-tomcat"
+                }
+                compile("org.springframework.boot:spring-boot-starter-jetty:$springBootVersion")
+                compile("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion")
+                compile("org.springframework.boot:spring-boot-starter-jersey:$springBootVersion")
+//                compile("org.springframework.security:spring-security-config:3.2.4.RELEASE")
+
+                //jpa
+                compile("org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion")
+                // need to use driver version 5.1.26 with mysql 5.6
+                // quartz issue http://forums.terracotta.org/forums/posts/list/8339.page because of
+                // driver issue http://bugs.mysql.com/bug.php?id=66659
+                compile("mysql:mysql-connector-java:5.1.26")
+                compile("com.zaxxer:HikariCP:2.4.3")
+
+                // quartz
+                compile("org.quartz-scheduler:quartz:$quartzVersion")
+                compile("org.quartz-scheduler:quartz-jobs:$quartzVersion")
+
+                compileOnly("org.projectlombok:lombok:$lombokVersion")
+                compile ("org.apache.httpcomponents:httpclient:$httpClientVersion")
+
+                testCompile("junit:junit")
+
+                compile('com.google.code.findbugs:jsr305:3.0.1')
+
+                compile 'com.readytalk:metrics3-statsd:4.1.0'
+                compile ('com.ryantenney.metrics:metrics-spring:3.0.4') {
+                    exclude (group: 'com.codahale.metrics')
+                    exclude (group: 'org.springframework')
+                }
+
+                compile ('org.jgrapht:jgrapht-core:0.9.1')
+                compile ('io.dropwizard.metrics:metrics-core:3.1.1')
+                compile ('io.dropwizard.metrics:metrics-annotation:3.1.1')
+                compile ('io.dropwizard.metrics:metrics-healthchecks:3.1.1')
+
+                compile ('org.springframework:spring-aspects:4.1.6.RELEASE')
+                compile ('org.springframework:spring-context-support:4.1.6.RELEASE')
+
+                compile ('io.swagger:swagger-core:1.5.0')
+
+                compile ('org.hibernate:hibernate-validator:5.3.4.Final')
+
+            }
+        }
+
+
+
+jar {
+    baseName = 'samay'
+    version =  '0.1.0-SNAPSHOT'
+}

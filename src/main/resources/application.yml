@@ -1,0 +1,46 @@
+timeservice:
+  httpDispatcherEnabled: true
+  httpDispatcherTimeout: 1000
+  dispatcherJobBatchSize: 100
+  callbackExpiryHours: 6
+  purgeJobBatchSize: 100
+  purgeAfterDays: 14
+
+server:
+    port: 36601
+    connectionTimeout: 60000
+    jetty:
+      acceptors: 1
+      selectors: 10
+
+logging:
+  #file: ""
+  pattern:
+    console: "%highlight(%-5level)[samay] [%date] [%yellow(%X{txnId})] [%thread] [%cyan(%logger{0})]: %msg%n"
+
+quartz:
+  scheduler:
+    instanceName: samay
+    instanceId: AUTO
+    makeSchedulerThreadDaemon: true
+  threadPool:
+    class: org.quartz.simpl.SimpleThreadPool
+    makeThreadsDaemons: true
+    threadCount: 10
+    threadPriority: 5
+  jobstore:
+    class: org.quartz.impl.jdbcjobstore.JobStoreTX
+    driverDelegateClassName: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+    tablePrefix: QRTZ_
+    isClustered: true
+    clusterCheckinInterval: 20000
+    misfireThreshold: 25000
+  datasource:
+    driver: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/quartz
+    user: root
+    password:
+    maxConnections: 10
+    validationQuery: SELECT 1
+    idleConnectionValidationSeconds: 300
+
