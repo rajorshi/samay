@@ -1,7 +1,7 @@
 package com.rajorshi.samay.jobs;
 
 import com.rajorshi.samay.configuration.TimeServiceConfiguration;
-import com.rajorshi.samay.model.dao.TimedCallbackRequestDao;
+import com.rajorshi.samay.model.dao.CallbackRequestDao;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -20,7 +20,7 @@ public class PurgeOldCallbacksJob implements Job {
     private static final int MAX_REQUEST_PERSISTENCE_DAYS = 14;
 
     @Inject
-    private TimedCallbackRequestDao timedCallbackRequestDao;
+    private CallbackRequestDao callbackRequestDao;
     @Inject
     private TimeServiceConfiguration timeServiceConfiguration;
 
@@ -29,7 +29,7 @@ public class PurgeOldCallbacksJob implements Job {
     public void execute(JobExecutionContext context) throws org.quartz.JobExecutionException {
 
         int days = context.getMergedJobDataMap().getInt(JobDataMapKeys.DAYS);
-        timedCallbackRequestDao.deleteCallbacksByDate(purgeTill(days), BATCH_SIZE);
+        callbackRequestDao.deleteCallbacksByDate(purgeTill(days), BATCH_SIZE);
     }
 
     private Date purgeTill(int days) {

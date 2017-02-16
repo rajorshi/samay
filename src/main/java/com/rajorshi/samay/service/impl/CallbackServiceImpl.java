@@ -1,8 +1,8 @@
 package com.rajorshi.samay.service.impl;
 
 import com.rajorshi.samay.common.ValidationError;
-import com.rajorshi.samay.model.dao.CallbackSearchFilter;
-import com.rajorshi.samay.model.dao.TimedCallbackRequestDao;
+import com.rajorshi.samay.model.dao.CallbackRequestSearchFilter;
+import com.rajorshi.samay.model.dao.CallbackRequestDao;
 import com.rajorshi.samay.model.repository.CallbackMethod;
 import com.rajorshi.samay.model.repository.CallbackRequest;
 import com.rajorshi.samay.resources.dto.NewCallbackRequestDto;
@@ -28,7 +28,7 @@ public class CallbackServiceImpl implements CallbackService {
     @Inject
     private Validator validator;
     @Inject
-    private TimedCallbackRequestDao callbackDao;
+    private CallbackRequestDao callbackDao;
 
     @Override
     @Transactional
@@ -56,7 +56,7 @@ public class CallbackServiceImpl implements CallbackService {
     }
 
     @Override
-    public ResponseEntity findCallbacks(CallbackSearchFilter filter, int offset, int limit) {
+    public ResponseEntity findCallbacks(CallbackRequestSearchFilter filter, int offset, int limit) {
 
         List<SavedCallbackRequestDto> dtos = new ArrayList<>();
         List<CallbackRequest> callbacks = callbackDao.findCallbacks(filter, offset, limit);

@@ -1,7 +1,7 @@
 package com.rajorshi.samay.resources;
 
 import com.rajorshi.samay.common.ValidationError;
-import com.rajorshi.samay.model.dao.CallbackSearchFilter;
+import com.rajorshi.samay.model.dao.CallbackRequestSearchFilter;
 import com.rajorshi.samay.model.repository.RequestStatus;
 import com.rajorshi.samay.resources.dto.NewCallbackRequestDto;
 import com.rajorshi.samay.service.CallbackService;
@@ -31,14 +31,17 @@ public class CallbackResource {
         this.callbackService = callbackService;
     }
 
-    @PostMapping
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE
+            , produces = MediaType.APPLICATION_JSON_VALUE
+    )
     @Transactional
     public ResponseEntity registerCallback(@RequestBody NewCallbackRequestDto dto)
     {
         return callbackService.registerCallback(dto);
     }
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getCallbacks(
             @QueryParam("ext_id") String extId
             , @QueryParam("ns") String namespace
@@ -48,7 +51,7 @@ public class CallbackResource {
             , @QueryParam("after") Date after
             )
     {
-        CallbackSearchFilter.CallbackSearchFilterBuilder builder = CallbackSearchFilter.builder()
+        CallbackRequestSearchFilter.CallbackRequestSearchFilterBuilder builder = CallbackRequestSearchFilter.builder()
                 .after(after)
                 .before(before)
                 .source(src)

@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CallbackSearchFilter {
+public class CallbackRequestSearchFilter {
 
     private String extRefId;
     private String namespace;

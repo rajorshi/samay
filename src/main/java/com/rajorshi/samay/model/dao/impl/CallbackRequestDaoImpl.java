@@ -1,7 +1,7 @@
 package com.rajorshi.samay.model.dao.impl;
 
-import com.rajorshi.samay.model.dao.CallbackSearchFilter;
-import com.rajorshi.samay.model.dao.TimedCallbackRequestDao;
+import com.rajorshi.samay.model.dao.CallbackRequestSearchFilter;
+import com.rajorshi.samay.model.dao.CallbackRequestDao;
 import com.rajorshi.samay.model.repository.CallbackRequest;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +16,10 @@ import java.util.List;
 
 @Repository
 @Transactional
-public class TimedCallbackRequestDaoImpl extends  AbstractDao<CallbackRequest,Long> implements TimedCallbackRequestDao {
+public class CallbackRequestDaoImpl extends  AbstractDao<CallbackRequest,Long> implements CallbackRequestDao {
 
     @Inject
-    public TimedCallbackRequestDaoImpl(EntityManager entityManager) {
+    public CallbackRequestDaoImpl(EntityManager entityManager) {
         super(entityManager, CallbackRequest.class);
     }
 
@@ -55,11 +55,10 @@ public class TimedCallbackRequestDaoImpl extends  AbstractDao<CallbackRequest,Lo
                 .setParameter(1, date)
                 .setParameter(2, limit);
         return query.executeUpdate();
-
     }
 
     @Override
-    public List<CallbackRequest> findCallbacks(CallbackSearchFilter filter, int offset, int limit) {
+    public List<CallbackRequest> findCallbacks(CallbackRequestSearchFilter filter, int offset, int limit) {
 
         CriteriaQuery<CallbackRequest> cq = getCriteriaQuery();
         Root<CallbackRequest> request = cq.from(getEntityClass());

@@ -30,8 +30,7 @@ public class AppConfiguration {
 
     @Bean
     public Validator localValidatorFactoryBean() {
-        LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
-        return bean;
+        return new LocalValidatorFactoryBean();
     }
 
     @Scope("request")

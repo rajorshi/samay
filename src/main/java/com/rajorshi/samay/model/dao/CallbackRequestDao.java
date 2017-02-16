@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public interface TimedCallbackRequestDao extends Serializable {
+public interface CallbackRequestDao extends Serializable {
 
     CallbackRequest createNewTimedCallback(CallbackRequest callback);
 
@@ -16,7 +16,7 @@ public interface TimedCallbackRequestDao extends Serializable {
 
     List<CallbackRequest> getPendingCallbacks(String namespace, Date date, long limit);
 
-    List<CallbackRequest> findCallbacks(CallbackSearchFilter filter, int offset, int limit);
+    List<CallbackRequest> findCallbacks(CallbackRequestSearchFilter filter, int offset, int limit);
 
     int deleteCallbacksByDate(Date date, long limit);
 }

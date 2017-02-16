@@ -3,7 +3,7 @@ package com.rajorshi.samay.jobs;
 import com.rajorshi.samay.dispatchers.CallbackDispatcher;
 import com.rajorshi.samay.dispatchers.CallbackDispatcherFactory;
 import com.rajorshi.samay.dispatchers.DispatcherException;
-import com.rajorshi.samay.model.dao.TimedCallbackRequestDao;
+import com.rajorshi.samay.model.dao.CallbackRequestDao;
 import com.rajorshi.samay.model.repository.CallbackRequest;
 import com.rajorshi.samay.model.repository.RequestStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class DispatchCallbacksJob implements Job {
     private static final int CALLBACK_EXPIRY_HOURS = 6;
 
     @Inject
-    private TimedCallbackRequestDao timedCallbackRequestDao;
+    private CallbackRequestDao callbackRequestDao;
     @Inject
     private CallbackDispatcherFactory dispatcherFactory;
 
@@ -39,7 +39,7 @@ public class DispatchCallbacksJob implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
 
         String ns = context.getMergedJobDataMap().get(JobDataMapKeys.NAMESPACE).toString();
-        List<CallbackRequest> callbacks = timedCallbackRequestDao.getPendingCallbacks(
+        List<CallbackRequest> callbacks = callbackRequestDao.getPendingCallbacks(
                 ns
                 , Calendar.getInstance().getTime()
                 , BATCH_SIZE
@@ -63,7 +63,7 @@ public class DispatchCallbacksJob implements Job {
                 }
             }
         }
-        timedCallbackRequestDao.save(callbacks);
+        callbackRequestDao.save(callbacks);
     }
 
     private boolean callbackExpired(CallbackRequest callback) {

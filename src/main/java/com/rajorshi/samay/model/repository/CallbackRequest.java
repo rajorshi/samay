@@ -11,8 +11,6 @@ import java.util.Date;
 @Getter
 @ToString(exclude = {"target"})
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Table(name="timed_callbacks")
 @NamedNativeQueries({
         @NamedNativeQuery(
@@ -79,6 +77,26 @@ public class CallbackRequest extends BasicEntity {
 
     @Column(name = "status_reason", length = 512)
     private String statusReason;
+
+    @Builder
+    private CallbackRequest(
+            String namespace
+            , String extRefId
+            , String source
+            , String data
+            , Date callAt
+            , Date calledAt
+            , URI target
+    ) {
+        this.namespace = namespace;
+        this.extRefId = extRefId;
+        this.source = source;
+        this.data = data;
+        this.callAt = callAt;
+        this.calledAt = calledAt;
+        this.status = RequestStatus.Pending;
+        setTarget(target);
+    }
 
     private void setTarget(URI url) {
         this.target = url;
