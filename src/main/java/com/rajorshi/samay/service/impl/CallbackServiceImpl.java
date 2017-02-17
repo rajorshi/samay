@@ -1,8 +1,8 @@
 package com.rajorshi.samay.service.impl;
 
 import com.rajorshi.samay.common.ValidationError;
-import com.rajorshi.samay.model.dao.CallbackRequestSearchFilter;
 import com.rajorshi.samay.model.dao.CallbackRequestDao;
+import com.rajorshi.samay.model.dao.CallbackRequestSearchFilter;
 import com.rajorshi.samay.model.repository.CallbackMethod;
 import com.rajorshi.samay.model.repository.CallbackRequest;
 import com.rajorshi.samay.resources.dto.NewCallbackRequestDto;
@@ -18,9 +18,7 @@ import javax.transaction.Transactional;
 import javax.validation.Validator;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 public class CallbackServiceImpl implements CallbackService {
@@ -59,7 +57,19 @@ public class CallbackServiceImpl implements CallbackService {
     public ResponseEntity findCallbacks(CallbackRequestSearchFilter filter, int offset, int limit) {
 
         List<SavedCallbackRequestDto> dtos = new ArrayList<>();
-        List<CallbackRequest> callbacks = callbackDao.findCallbacks(filter, offset, limit);
+        List<CallbackRequest> callbacks = Collections.emptyList();
+
+        try {
+            callbackDao.findCallbacks(filter, offset, limit);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR_500)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(
+                            Collections.singletonList(
+                                    new ValidationError(0, Collections.singletonList(e.getMessage()))
+                            )
+                    );
+        }
         for (CallbackRequest callback: callbacks) {
             try {
                 dtos.add(toDto(callback));
@@ -80,10 +90,19 @@ public class CallbackServiceImpl implements CallbackService {
             throws IllegalArgumentException, URISyntaxException {
 
         URI uri = new URI(dto.getTargetUrl());
-        CallbackMethod.fromString(uri.getScheme());
+        CallbackMethod.fromString(uri.getScheme()); // forcing parse to check correctness
+        Date callAt = dto.getAt();
+        if (callAt == null) {
+            if (dto.getAfter() <= 0) {
+                throw new IllegalArgumentException("Illegal or null callback time specified.");
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.MINUTE, dto.getAfter());
+            callAt = calendar.getTime();
+        }
         return CallbackRequest.builder()
                 .extRefId((dto.getExtRefId() != null) ? dto.getExtRefId() : "0-0")
-                .callAt(dto.getAt())
+                .callAt(callAt)
                 .target(uri)
                 .namespace(dto.getNamespace())
                 .data(dto.getData())

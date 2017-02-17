@@ -32,8 +32,8 @@ public class CallbackResource {
     }
 
     @PostMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE
-            , produces = MediaType.APPLICATION_JSON_VALUE
+        consumes = MediaType.APPLICATION_JSON_VALUE
+        , produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Transactional
     public ResponseEntity registerCallback(@RequestBody NewCallbackRequestDto dto)
@@ -43,13 +43,13 @@ public class CallbackResource {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getCallbacks(
-            @QueryParam("ext_id") String extId
-            , @QueryParam("ns") String namespace
-            , @QueryParam("src") String src
-            , @QueryParam("status") String status
-            , @QueryParam("before") Date before
-            , @QueryParam("after") Date after
-            )
+        @QueryParam("ext_id") String extId
+        , @QueryParam("ns") String namespace
+        , @QueryParam("src") String src
+        , @QueryParam("status") String status
+        , @QueryParam("before") Date before
+        , @QueryParam("after") Date after
+        )
     {
         CallbackRequestSearchFilter.CallbackRequestSearchFilterBuilder builder = CallbackRequestSearchFilter.builder()
                 .after(after)

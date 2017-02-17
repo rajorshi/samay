@@ -20,6 +20,7 @@ public class SavedCallbackRequestDto {
     private String data;
     private Date callAt;
     private Date calledAt;
+    //    private String timeZone;
     private RequestStatus status;
     private String statusReason;
 

@@ -23,6 +23,7 @@ public class NewCallbackRequestDto {
     String targetUrl;
     @NotNull
     Date at;
+    int after;
     @NotNull
     String data;
 
