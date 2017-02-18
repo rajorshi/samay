@@ -13,15 +13,15 @@ import java.util.Date;
 @AllArgsConstructor
 public class SavedCallbackRequestDto {
 
-    private String namespace;
-    private String extRefId;
-    private String source;
-    private String target;
-    private String data;
-    private Date callAt;
-    private Date calledAt;
+    String namespace;
+    String extRefId;
+    String source;
+    String target;
+    String data;
+    Date callAt;
+    Date calledAt;
     //    private String timeZone;
-    private RequestStatus status;
-    private String statusReason;
+    RequestStatus status;
+    String statusReason;
 
 }

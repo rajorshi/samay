@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.QueryParam;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
+import java.util.Locale;
 
 
 @Slf4j
@@ -47,17 +49,43 @@ public class CallbackResource {
         , @QueryParam("ns") String namespace
         , @QueryParam("src") String src
         , @QueryParam("status") String status
-        , @QueryParam("before") Date before
-        , @QueryParam("after") Date after
+        , @QueryParam("before") String beforeStr
+        , @QueryParam("after") String afterStr
         )
     {
         CallbackRequestSearchFilter.CallbackRequestSearchFilterBuilder builder = CallbackRequestSearchFilter.builder()
-                .after(after)
-                .before(before)
                 .source(src)
                 .namespace(namespace)
                 .extRefId(extId);
 
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-mm-yyyy HH-mm", Locale.ENGLISH);
+        SimpleDateFormat format = new SimpleDateFormat("dd-mm-yyyy HH-mm", Locale.ENGLISH);
+        if (beforeStr != null && !beforeStr.isEmpty()) {
+            try {
+                builder.before(format.parse(beforeStr)); // do not use
+            } catch (ParseException e) {
+                return ResponseEntity.badRequest()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(
+                                Collections.singletonList(
+                                        new ValidationError(0, Collections.singletonList(e.getMessage()))
+                                )
+                        );
+            }
+        }
+        if (afterStr != null && !afterStr.isEmpty()) {
+            try {
+                builder.after(format.parse(afterStr)); // do not use
+            } catch (ParseException e) {
+                return ResponseEntity.badRequest()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(
+                                Collections.singletonList(
+                                        new ValidationError(0, Collections.singletonList(e.getMessage()))
+                                )
+                        );
+            }
+        }
         if (status != null) {
             try {
                 builder.status(RequestStatus.fromString(status));
@@ -71,7 +99,6 @@ public class CallbackResource {
                         );
             }
         }
-
         return callbackService.findCallbacks(builder.build(), 0, 100);
     }
 

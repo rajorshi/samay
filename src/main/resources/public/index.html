@@ -103,11 +103,13 @@
       <div class="form-group top-buffer">
         <div class="col-md-4">
           <label class="sr-only" for="after">Scheduled After</label>
-          <input type="datetime" class="form-control" id="after" name="after" placeholder="Scheduled After">
+          <input type="datetime" class="form-control" id="after" name="after" placeholder="Scheduled After (dd-mm-yyy HH:mm)"
+                 pattern="\d{1,2}-\d{1,2}-\d{4}" title="dd-mm-yyyy HH:mm">
         </div>
         <div class="col-md-4">
           <label class="sr-only" for="before">Scheduled After</label>
-          <input type="datetime" class="form-control" id="before" name="before" placeholder="Scheduled Before">
+          <input type="datetime" class="form-control" id="before" name="before" placeholder="Scheduled Before (dd-mm-yyy HH:mm)"
+                 pattern="\d{1,2}-\d{1,2}-\d{4} \d{1,2}:\d{1,2}" title="dd-mm-yyyy HH:mm">
         </div>
         <div class="col-md-4">
           <div class="row">
@@ -140,33 +142,6 @@
           </tr>
         </thead>
         <tbody>
-        <tr>
-          <td class="col-xs-2">1-2-3</td>
-          <td class="col-xs-2">nm</td>
-          <td class="col-xs-2">some-source</td>
-          <td class="col-xs-2">http://hello.com</td>
-          <td class="col-xs-2">2017-02-12 15:29:00</td>
-          <td class="col-xs-1">Dispatched</td>
-          <td class="col-xs-1"><button type="button" class="btn btn-primary btn-sm show-more" data-json="hello" data-toggle="modal" data-target="#showCallbackDetailsModal">More</button></td>
-        </tr>
-        <tr>
-          <td class="col-xs-2">3-2</td>
-          <td class="col-xs-2">nm</td>
-          <td class="col-xs-2">some-other-source</td>
-          <td class="col-xs-2">http://hello.com</td>
-          <td class="col-xs-2">2017-02-12 15:29:00</td>
-          <td class="col-xs-1">DispatchFailed</td>
-          <td class="col-xs-1"><button type="button" class="btn btn-primary btn-sm show-more" data-json="hello" data-toggle="modal" data-target="#showCallbackDetailsModal">More</button></td>
-        </tr>
-        <tr>
-          <td class="col-xs-2">3-2</td>
-          <td class="col-xs-2">nm</td>
-          <td class="col-xs-2">some-source</td>
-          <td class="col-xs-2">http://hello.com</td>
-          <td class="col-xs-2">2017-02-12 15:29:00</td>
-          <td class="col-xs-1">Pending</td>
-          <td class="col-xs-1"><button type="button" class="btn btn-primary btn-sm show-more" data-json="hello" data-toggle="modal" data-target="#showCallbackDetailsModal">More</button></td>
-        </tr>
         </tbody>
       </table>
     </div>
@@ -186,49 +161,65 @@
 <script src="js/ie10-viewport-bug-workaround.js"></script>
 <script language="javascript" type="text/javascript">
 
-  $('.show-more').click( function() {
-    var details = $(this).data("json");
-    $('.modal-body p').text(details);
+  //triggered when modal is about to be shown
+  $('#showCallbackDetailsModal').on('show.bs.modal', function(e) {
+      $(e.currentTarget).find('p').text($(e.relatedTarget).data('object'));
   });
 
+  function successHandler(data) {
+
+    var body = $("#searchResults").find('tbody');
+    body.empty();
+
+    if (data.length == 0) {
+      body.html("<div class='alert alert-info' role='alert'>Search returned no results. Expand your filters.</div>");
+    }
+
+    $.each(data, function(idx, elem) {
+      button = $('<button>')
+                .attr('type', 'button')
+                .attr('data-toggle', 'modal')
+                .attr('data-target', '#showCallbackDetailsModal')
+                .addClass("btn btn-primary btn-sm show-more")
+                .data('object', JSON.stringify(elem, null, 2))
+                .text("More");
+
+      body.append($('<tr>')
+        .append($('<td>')
+          .addClass("col-xs-2")
+          .text(elem.ext_ref_id))
+        .append($('<td>')
+          .addClass("col-xs-2")
+          .text(elem.namespace))
+        .append($('<td>')
+          .addClass("col-xs-2")
+          .text(elem.source))
+        .append($('<td>')
+          .addClass("col-xs-2")
+          .text(elem.target))
+        .append($('<td>')
+          .addClass("col-xs-2")
+          .text(elem.call_at))
+        .append($('<td>')
+          .addClass("col-xs-1")
+          .text(elem.status))
+        .append($('<td>')
+          .addClass("col-xs-1")
+          .append(button))
+      );
+    });
+  }
+
+  function errorHandler(e) {
+    var body = $("#searchResults").find('tbody');
+    body.html("<div class='alert alert-error' role='alert'>" + e.responseJSON[0].error_messages[0] + "</div>");
+  }
+
   function submitSearch() {
-    $.get( '/callbacks', $('#searchForm').serialize(), function(data) {
-      var body = $("#searchResults").find('tbody');
-      $.each(data, function(idx, elem) {
-        body.append($('<tr>')
-          .append($('<td>')
-            .addClass("col-xs-2")
-            .text(elem.ext_ref_id))
-          .append($('<td>')
-            .addClass("col-xs-2")
-            .text(elem.namespace))
-          .append($('<td>')
-            .addClass("col-xs-2")
-            .text(elem.source))
-          .append($('<td>')
-            .addClass("col-xs-2")
-            .text(elem.target))
-          .append($('<td>')
-            .addClass("col-xs-2")
-            .text(elem.call_at))
-          .append($('<td>')
-            .addClass("col-xs-1")
-            .text(elem.status))
-          .append($('<td>')
-            .addClass("col-xs-1")
-            .append($('button')
-              .type('button')
-              .data('json', JSON.stringify(elem))
-              .data('toggle', 'modal')
-              .data('target', '#showCallbackDetailsModal')
-              .addClass("btn btn-primary btn-sm show-more")
-              .text("More")
-            )
-          )
-        )
-      })},
-      'json' // I expect a JSON response
-    );
+    $.get( '/callbacks', $('#searchForm').serialize()
+      , successHandler
+      ,'json' // I expect a JSON response
+    ).fail(errorHandler);
   };
 
 </script>

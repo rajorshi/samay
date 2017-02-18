@@ -69,7 +69,7 @@ public class CallbackRequest extends BasicEntity {
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     @Transient
-    private URI target;
+    private transient URI target;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 32, columnDefinition = "varchar(32) default 'Pending'")
