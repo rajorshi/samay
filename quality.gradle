@@ -27,12 +27,7 @@ jacocoTestReport {
     classDirectories = files(subprojects.sourceSets.main.output)
     classDirectories = files(classDirectories.files.collect {
         fileTree(dir: it, exclude: [
-                '**/*Exception.class',
-                '**/com/ekart/ilip/kshetra/config/**/*.class',
-                '**/com/ekart/ilip/kshetra/appservices/dtos/*.class',
-                '**/com/ekart/ilip/kshetra/Application.class',
-                '**/com/ekart/ilip/kshetra/**/*/mappers/*Impl.class',
-                '**/com/ekart/ilip/kshetra/**/*/dal/models/*.class'
+                '**/*Exception.class'
         ])
     })
     executionData = files(subprojects.jacocoTestReport.executionData)
@@ -122,11 +117,11 @@ sonarqube {
     //noinspection GroovyAssignabilityCheck
     properties{
         //noinspection GroovyAssignabilityCheck
-        property 'sonar.host.url', 'http://ekart-sonarqube.nm.flipkart.com:9000'
+        property 'sonar.host.url', ''
         //noinspection GroovyAssignabilityCheck
-        property 'sonar.projectKey', 'com.ekart.ilip:$project.name'
+        property 'sonar.projectKey', 'rajorshi:$project.name'
         //noinspection GroovyAssignabilityCheck
-        property 'sonar.projectName', 'ILIP - kshetra'
+        property 'sonar.projectName', 'samay'
         //noinspection GroovyAssignabilityCheck
         property 'sonar.java.coveragePlugin', 'jacoco'
         //noinspection GroovyAssignabilityCheck
@@ -140,9 +135,9 @@ sonarqube {
         //noinspection GroovyAssignabilityCheck
         property 'sonar.tests', 'src/test'
         //noinspection GroovyAssignabilityCheck
-        property 'sonar.exclusions', '**/com/ekart/balancebucket/apis/jetty/CustomJetty*,**/generated-src/**/*'
+        property 'sonar.exclusions', '**/generated-src/**/*'
         //noinspection GroovyAssignabilityCheck
-        property 'sonar.coverage.exclusions', '**/com/ekart/ilip/kshetra/config/**/*.class, **/com/ekart/ilip/kshetra/appservices/dtos/*.java,**/com/ekart/ilip/kshetra/**/*/mappers/*Impl.java,**/com/ekart/ilip/kshetra/Application.java,**/com/ekart/ilip/kshetra/**/*/dal/models/*.java'
+        property 'sonar.coverage.exclusions', '**/com/rajorshi/samay/config/**/*.class,**/com/rajorshi/samay/Application.java'
     }
 
 }
