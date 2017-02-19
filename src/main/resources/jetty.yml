@@ -1,4 +1,4 @@
 server:
   requestLog:
     print: true
-    filename: /tmp/ekl-timeservice/src/main/resources/application.log
+    filename: /tmp/samay/src/main/resources/application.log
