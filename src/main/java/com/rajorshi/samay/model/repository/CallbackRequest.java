@@ -88,6 +88,7 @@ public class CallbackRequest extends BasicEntity {
             , Date calledAt
             , URI target
     ) {
+        super();
         this.namespace = namespace;
         this.extRefId = extRefId;
         this.source = source;

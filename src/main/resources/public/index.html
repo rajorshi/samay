@@ -83,6 +83,10 @@
 
 <!-- Begin page content -->
 <div class="container">
+  <div class="row alert alert-danger hidden" id="errorBoard">
+    <a href="#" class="close" data-dismiss="alert" id="closeErrorBoard">&times;</a>
+    <p></p>
+  </div>
   <div class="row">
     <form class="form-horizontal" id="searchForm" name="searchForm">
       <div class="form-group top-buffer">
@@ -166,6 +170,15 @@
       $(e.currentTarget).find('p').text($(e.relatedTarget).data('object'));
   });
 
+  $('#closeErrorBoard').on('click', function(e) {
+    $('#errorBoard').addClass('hidden');
+  });
+
+  function errorHandler(e) {
+    $('#errorBoard p:first').text(e.responseJSON[0].error_messages[0]);
+    $('#errorBoard').removeClass('hidden');
+  }
+
   function successHandler(data) {
 
     var body = $("#searchResults").find('tbody');
@@ -208,11 +221,6 @@
           .append(button))
       );
     });
-  }
-
-  function errorHandler(e) {
-    var body = $("#searchResults").find('tbody');
-    body.html("<div class='alert alert-error' role='alert'>" + e.responseJSON[0].error_messages[0] + "</div>");
   }
 
   function submitSearch() {

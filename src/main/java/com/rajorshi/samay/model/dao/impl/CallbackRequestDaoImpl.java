@@ -77,7 +77,7 @@ public class CallbackRequestDaoImpl extends  AbstractDao<CallbackRequest,Long> i
             if (filter.getStatus() != null) {
                 predicates.add(cb.equal(request.get("status"), filter.getStatus()));
             }
-            Expression<Date> schedule = request.<Date>get("call_at").as(Date.class);
+            Expression<Date> schedule = request.get("call_at").as(Date.class);
             if (filter.getBefore() != null && filter.getAfter() != null) {
                 predicates.add(
                         cb.between(schedule, filter.getAfter(), filter.getBefore())
